@@ -42,7 +42,8 @@ class MAMLPolicyEvaluator(PolicyEvaluator):
                  policy_config=None,
                  worker_index=0,
                  monitor_path=None,
-                 log_level=None):
+                 log_level=None,
+                 callbacks=None):
         policy_config.pop("env_config")
         tf.set_random_seed(policy_config["random_seed"])
         PolicyEvaluator.__init__(self,
@@ -65,7 +66,8 @@ class MAMLPolicyEvaluator(PolicyEvaluator):
                                  policy_config,
                                  worker_index,
                                  monitor_path,
-                                 log_level)
+                                 log_level,
+                                 callbacks)
 
     def reset_sample(self):
         async_env = self.async_env
@@ -92,7 +94,7 @@ class MAMLPolicyEvaluator(PolicyEvaluator):
             sampler.async_vector_env, sampler.extra_batches.put,
             sampler.policies, sampler.policy_mapping_fn,
             sampler.unroll_length, sampler.horizon,
-            sampler._obs_filters, False, False, self.tf_sess)
+            sampler._obs_filters, False, False, self.callbacks, self.tf_sess)
         sampler.get_metrics()
         sampler.get_extra_batches()
 
